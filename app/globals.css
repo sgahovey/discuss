@@ -1,26 +1,651 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --tinder-from: #ff655b;
+  --tinder-via: #fd5068;
+  --tinder-to: #ff8e9c;
+  --snap: #fffc00;
+  --snap-dim: #f3d900;
+
+  --paper: #ffffff;
+  --paper-soft: #fff7f5;
+  --surface-ghost: rgba(13, 13, 16, 0.05);
+  --surface-ghost-hover: rgba(13, 13, 16, 0.09);
+
+  --text: #0d0d10;
+  --text-muted: #5a5a66;
+  --on-yellow: #0d0d10;
+
+  --border: rgba(13, 13, 16, 0.10);
+  --border-strong: rgba(13, 13, 16, 0.18);
+  --shadow-soft: 0 12px 40px rgba(253, 80, 104, 0.18);
+  --shadow-card: 0 10px 36px rgba(13, 13, 16, 0.10);
+
+  --danger: #d63a5e;
+
+  --background: var(--paper-soft);
+  --foreground: var(--text);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
+  --color-text: var(--text);
+  --color-muted: var(--text-muted);
+  --color-snap: var(--snap);
+  --color-snap-dim: var(--snap-dim);
+  --color-tinder-from: var(--tinder-from);
+  --color-tinder-via: var(--tinder-via);
+  --color-tinder-to: var(--tinder-to);
+  --color-danger: var(--danger);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --paper: #1a1a22;
+    --paper-soft: #0c0c11;
+    --surface-ghost: rgba(255, 255, 255, 0.06);
+    --surface-ghost-hover: rgba(255, 255, 255, 0.11);
+
+    --text: #f5f5f7;
+    --text-muted: #b5b5c1;
+    --border: rgba(255, 255, 255, 0.10);
+    --border-strong: rgba(255, 255, 255, 0.18);
+    --shadow-card: 0 10px 36px rgba(0, 0, 0, 0.55);
+    --danger: #ff8aa6;
   }
 }
 
+html,
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  -webkit-tap-highlight-color: transparent;
 }
+
+body {
+  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  font-feature-settings: "ss01", "cv11";
+  letter-spacing: -0.01em;
+  min-height: 100svh;
+}
+
+/* ───────────────────────── Layout ───────────────────────── */
+
+.page {
+  width: 100%;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container-narrow {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.container-wide {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .container-wide { padding: 0 2rem; }
+}
+
+/* ───────────────────────── Backgrounds ───────────────────────── */
+
+.bg-flame {
+  background:
+    radial-gradient(120% 80% at 0% 0%, rgba(255, 252, 0, 0.32) 0%, transparent 50%),
+    radial-gradient(120% 80% at 100% 100%, rgba(255, 101, 91, 0.32) 0%, transparent 55%),
+    linear-gradient(135deg, var(--tinder-from) 0%, var(--tinder-via) 45%, var(--tinder-to) 100%);
+  background-size: 200% 200%, 200% 200%, 200% 200%;
+  animation: flame-shift 14s ease-in-out infinite;
+}
+
+@keyframes flame-shift {
+  0%, 100% { background-position: 0% 0%, 100% 100%, 0% 50%; }
+  50% { background-position: 30% 20%, 70% 80%, 100% 50%; }
+}
+
+.bg-canvas {
+  background:
+    radial-gradient(60% 50% at 12% 0%, rgba(255, 142, 156, 0.18), transparent 55%),
+    radial-gradient(50% 50% at 95% 20%, rgba(255, 252, 0, 0.18), transparent 55%),
+    radial-gradient(40% 40% at 50% 100%, rgba(255, 101, 91, 0.10), transparent 60%),
+    var(--background);
+}
+
+@media (prefers-color-scheme: dark) {
+  .bg-canvas {
+    background:
+      radial-gradient(60% 50% at 10% 0%, rgba(253, 80, 104, 0.18), transparent 55%),
+      radial-gradient(50% 50% at 95% 20%, rgba(255, 252, 0, 0.10), transparent 55%),
+      var(--background);
+  }
+}
+
+/* ───────────────────────── Cards / bubbles ───────────────────────── */
+
+.card {
+  background: var(--paper);
+  color: var(--text);
+  border-radius: 28px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-strong);
+}
+
+.bubble {
+  background: var(--paper);
+  color: var(--text);
+  padding: 0.65rem 1rem;
+  border-radius: 22px;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  max-width: min(78%, 560px);
+  box-shadow: 0 1px 2px rgba(13, 13, 16, 0.04);
+  border: 1px solid var(--border);
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.bubble-own {
+  background: var(--snap);
+  color: var(--on-yellow);
+  border-color: transparent;
+  border-bottom-right-radius: 8px;
+  box-shadow: 0 3px 14px rgba(255, 252, 0, 0.35);
+}
+
+.bubble-other { border-bottom-left-radius: 8px; }
+
+/* ───────────────────────── Buttons ───────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 3.25rem;
+  padding: 0 1.5rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: transform 120ms ease, box-shadow 200ms ease, opacity 120ms ease, background 200ms ease;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  border: none;
+}
+.btn:active { transform: scale(0.985); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(253, 80, 104, 0.35);
+}
+
+.btn-flame {
+  color: white;
+  background: linear-gradient(135deg, var(--tinder-from), var(--tinder-via) 55%, #ff8e3c 100%);
+  box-shadow: var(--shadow-soft);
+}
+.btn-flame:hover:not(:disabled) {
+  box-shadow: 0 16px 50px rgba(253, 80, 104, 0.32);
+  transform: translateY(-1px);
+}
+
+.btn-snap {
+  color: var(--on-yellow);
+  background: var(--snap);
+  box-shadow: 0 8px 26px rgba(255, 252, 0, 0.45);
+}
+.btn-snap:hover:not(:disabled) { background: var(--snap-dim); transform: translateY(-1px); }
+
+.btn-ghost {
+  color: var(--text);
+  background: var(--surface-ghost);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover:not(:disabled) { background: var(--surface-ghost-hover); }
+
+.btn-icon { width: 2.75rem; height: 2.75rem; padding: 0; }
+
+/* ───────────────────────── Inputs ─────────────────────────
+   IMPORTANT : pas de padding inline ici — c'est le composant qui
+   choisit (px-5 sans icone, pl-12 pr-4 avec icone gauche, etc).   */
+
+.field-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.field {
+  width: 100%;
+  height: 3.25rem;
+  padding-block: 0;
+  padding-inline: 1.15rem; /* defaut, override par utilitaires Tailwind */
+  border-radius: 9999px;
+  background: var(--surface-ghost);
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease;
+}
+.field::placeholder { color: var(--text-muted); opacity: 0.85; }
+.field:hover { border-color: var(--border-strong); }
+.field:focus {
+  border-color: var(--tinder-via);
+  background: var(--paper);
+  box-shadow: 0 0 0 4px rgba(253, 80, 104, 0.18);
+}
+
+/* Force le padding quand il y a une icone gauche / droite */
+.field.has-icon-left { padding-left: 3rem; }
+.field.has-icon-right { padding-right: 3rem; }
+
+/* ───────────────────────── Header / chrome ───────────────────────── */
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 0;
+  background: color-mix(in oklab, var(--paper) 86%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+
+.app-title {
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+  background: linear-gradient(90deg, var(--tinder-from), #ff8e3c 60%, var(--snap));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.app-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  padding: 0.75rem 0 calc(0.75rem + env(safe-area-inset-bottom));
+  background: color-mix(in oklab, var(--paper) 90%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid var(--border);
+}
+
+@media (min-width: 768px) {
+  .app-footer { padding: 1rem 0 calc(1rem + env(safe-area-inset-bottom)); }
+}
+
+/* ───────────────────────── Chat extras ───────────────────────── */
+
+.live-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--danger);
+  background: rgba(253, 80, 104, 0.10);
+  border: 1px solid rgba(253, 80, 104, 0.30);
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+}
+.live-dot::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--danger);
+  box-shadow: 0 0 0 3px rgba(253, 80, 104, 0.25);
+  animation: pulse-soft 1.6s ease-in-out infinite;
+}
+
+.stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem 0 0.5rem;
+}
+
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--surface-ghost);
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.stat-pill .num { color: var(--tinder-via); }
+
+.day-sep {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1rem 0 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.day-sep::before,
+.day-sep::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.char-counter {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.char-counter.warn { color: #c87a0a; }
+.char-counter.over { color: var(--danger); }
+
+.error-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  background: rgba(253, 80, 104, 0.10);
+  border: 1px solid rgba(253, 80, 104, 0.30);
+  color: var(--danger);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* ───────────────────────── Chat layout (sidebar + main) ───────────────────────── */
+
+.chat-layout {
+  flex: 1;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  height: 100svh;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: var(--paper);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+
+@media (min-width: 768px) {
+  .chat-layout {
+    grid-template-columns: 340px minmax(0, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .chat-layout {
+    grid-template-columns: 380px minmax(0, 1fr);
+  }
+}
+
+.chat-sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid var(--border);
+  background: var(--paper);
+}
+
+.chat-main {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--paper);
+}
+
+.convo-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 1rem;
+  text-align: left;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: background 150ms ease, border-color 150ms ease;
+  color: var(--text);
+}
+.convo-row:hover { background: var(--surface-ghost); }
+.convo-row.active {
+  background: linear-gradient(
+    90deg,
+    rgba(253, 80, 104, 0.10),
+    rgba(253, 80, 104, 0) 70%
+  );
+  border-left-color: var(--tinder-via);
+}
+.convo-row.has-unread {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 252, 0, 0.10),
+    rgba(255, 252, 0, 0) 70%
+  );
+}
+
+/* Story-ring gradient (Snapchat-style) */
+.story-ring {
+  display: inline-flex;
+  padding: 2px;
+  border-radius: 9999px;
+  background: conic-gradient(
+    from 180deg,
+    #fffc00,
+    #ff8e3c,
+    #ff655b,
+    #fd5068,
+    #7b61ff,
+    #fffc00
+  );
+  animation: ring-spin 6s linear infinite;
+}
+.story-ring-inner {
+  display: inline-flex;
+  padding: 2px;
+  border-radius: 9999px;
+  background: var(--paper);
+}
+@keyframes ring-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Pastille verte "en ligne" */
+.online-dot {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  background: #22c55e;
+  border: 2px solid var(--paper);
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+  animation: pulse-soft 1.8s ease-in-out infinite;
+}
+.online-dot.static-dot {
+  position: static;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border: none;
+  animation: none;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+}
+.offline-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--text-muted);
+  opacity: 0.5;
+}
+
+/* Badge non-lu type Tinder */
+.unread-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: var(--tinder-via);
+  color: transparent;
+  font-size: 0;
+  box-shadow: 0 0 0 3px rgba(253, 80, 104, 0.25);
+  flex-shrink: 0;
+}
+
+.convo-section-title {
+  padding: 0.85rem 1rem 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.convo-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: color-mix(in oklab, var(--paper) 88%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.convo-composer {
+  padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+  background: color-mix(in oklab, var(--paper) 90%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid var(--border);
+}
+
+/* ───────────────────────── Misc ───────────────────────── */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.32rem 0.8rem;
+  border-radius: 9999px;
+  background: var(--surface-ghost);
+  color: var(--text);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+}
+
+.avatar {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: var(--on-yellow);
+  background: linear-gradient(135deg, var(--snap) 0%, #ffd166 70%, var(--tinder-via) 100%);
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+.ghost {
+  filter: drop-shadow(0 6px 18px rgba(255, 252, 0, 0.55));
+  animation: ghost-float 4s ease-in-out infinite;
+}
+@keyframes ghost-float {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-10px) rotate(3deg); }
+}
+
+.heart-beat {
+  display: inline-block;
+  animation: heart-beat 1.4s ease-in-out infinite;
+}
+@keyframes heart-beat {
+  0%, 100% { transform: scale(1); }
+  20% { transform: scale(1.18); }
+  40% { transform: scale(0.96); }
+  60% { transform: scale(1.08); }
+}
+
+.fade-up { animation: fade-up 600ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in { animation: fade-in 300ms ease both; }
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.85); }
+}
+.pulse-soft { animation: pulse-soft 1.6s ease-in-out infinite; }
+
+.float-card {
+  border-radius: 28px;
+  background: var(--paper);
+  color: var(--text);
+  box-shadow: 0 30px 60px -10px rgba(13, 13, 16, 0.28);
+  border: 1px solid var(--border-strong);
+  overflow: hidden;
+}
+
+@keyframes drift {
+  0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+  50% { transform: translateY(-8px) rotate(calc(var(--rot, 0deg) + 1deg)); }
+}
+.drift { animation: drift 6s ease-in-out infinite; }

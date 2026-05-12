@@ -1,13 +1,9 @@
-import ChatInput from "@/components/ChatInput";
-import ChatMessages from "@/components/ChatMessages";
-import LogoutButton from "@/components/LogoutButton";
+import Conversations from "@/components/Conversations";
 
 export default function ChatPage() {
   return (
-    <div>
-      <LogoutButton />
-      <ChatMessages />
-      <ChatInput />
+    <div className="page bg-canvas">
+      <Conversations />
     </div>
   );
 }

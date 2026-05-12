@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { PacmanLoader } from "react-spinners";
 import {
-  FaUser,
   FaEnvelope,
   FaLock,
   FaEye,
@@ -13,9 +12,8 @@ import {
   FaCircleExclamation,
 } from "react-icons/fa6";
 
-export default function RegisterPage() {
+export default function LoginPage() {
   const router = useRouter();
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -26,20 +24,18 @@ export default function RegisterPage() {
     e.preventDefault();
     setErrorMsg(null);
     setLoading(true);
-    const { error } = await authClient.signUp.email({ name, email, password });
+    const { error } = await authClient.signIn.email({ email, password });
     if (error) {
-      setErrorMsg(error.message ?? "Impossible de creer le compte.");
+      setErrorMsg(error.message ?? "Identifiants invalides.");
       setLoading(false);
       return;
     }
-    e.target.reset();
     router.push("/chat");
     router.refresh();
   }
 
   return (
     <main className="page grid lg:grid-cols-2">
-      {/* Left: hero (lg+) */}
       <aside className="bg-flame relative hidden lg:flex flex-col justify-between p-12 text-white overflow-hidden">
         <svg
           className="ghost absolute top-16 right-16 w-24 h-24 text-[#fffc00] opacity-30"
@@ -54,32 +50,22 @@ export default function RegisterPage() {
         </a>
         <div className="fade-up">
           <h2 className="text-5xl xl:text-6xl font-black leading-[0.95] tracking-tight">
-            Bienvenue.
+            Hey,
             <br />
-            On t&apos;attendait.
+            content de te revoir.
           </h2>
           <p className="mt-6 text-white/90 text-lg max-w-md leading-relaxed">
-            Crée ton compte et entre dans le chat le plus chaleureux du web —
-            ambiance Snap, vibe Tinder.
+            Reconnecte-toi et reprends les conversations là où tu les avais
+            laissées.
           </p>
-          <div className="mt-8 flex items-center gap-4 text-white/85 text-sm">
-            <div className="flex -space-x-2">
-              <span className="avatar w-9 h-9 text-sm border-2 border-white">A</span>
-              <span className="avatar w-9 h-9 text-sm border-2 border-white" style={{ background: "linear-gradient(135deg,#7b61ff,#ff5edf 60%,#ff655b)", color: "white" }}>M</span>
-              <span className="avatar w-9 h-9 text-sm border-2 border-white" style={{ background: "linear-gradient(135deg,#fffc00,#ffd166 60%,#ff8e3c)" }}>L</span>
-            </div>
-            <span>+12k personnes déjà inscrites</span>
-          </div>
         </div>
         <p className="text-white/75 text-xs">
           Made with <span className="heart-beat">❤️</span> & ✨
         </p>
       </aside>
 
-      {/* Right: form */}
       <section className="bg-canvas flex items-center justify-center p-5 sm:p-10">
         <div className="w-full max-w-md fade-up">
-          {/* Mobile-only logo */}
           <a
             href="/"
             className="lg:hidden flex items-center justify-center gap-2 mb-6"
@@ -90,16 +76,19 @@ export default function RegisterPage() {
             </span>
           </a>
 
-          <form onSubmit={handleSubmit} className="card p-6 sm:p-9 flex flex-col gap-5">
+          <form
+            onSubmit={handleSubmit}
+            className="card p-6 sm:p-9 flex flex-col gap-5"
+          >
             <header className="text-center">
               <span className="chip">
-                <span className="heart-beat">✨</span> Rejoins Discuss
+                <span className="heart-beat">👋</span> Reconnexion
               </span>
               <h1 className="mt-4 text-3xl sm:text-4xl font-extrabold tracking-tight">
-                Crée ton compte
+                Te revoilà !
               </h1>
               <p className="text-muted text-sm sm:text-base mt-2">
-                En quelques secondes, c&apos;est promis.
+                Connecte-toi pour reprendre la discussion.
               </p>
             </header>
 
@@ -111,18 +100,6 @@ export default function RegisterPage() {
             )}
 
             <div className="flex flex-col gap-4">
-              <Field
-                label="Nom"
-                icon={<FaUser />}
-                type="text"
-                placeholder="Ton prénom"
-                autoComplete="given-name"
-                required
-                minLength={2}
-                maxLength={30}
-                value={name}
-                onChange={setName}
-              />
               <Field
                 label="Email"
                 icon={<FaEnvelope />}
@@ -138,10 +115,9 @@ export default function RegisterPage() {
                 label="Mot de passe"
                 icon={<FaLock />}
                 type={showPassword ? "text" : "password"}
-                placeholder="Au moins 6 caractères"
-                autoComplete="new-password"
+                placeholder="Ton mot de passe"
+                autoComplete="current-password"
                 required
-                minLength={6}
                 maxLength={72}
                 value={password}
                 onChange={setPassword}
@@ -167,25 +143,24 @@ export default function RegisterPage() {
               disabled={loading}
               className="btn btn-flame w-full mt-1"
             >
-              {loading ? <PacmanLoader size={10} color="#fff" /> : "Créer mon compte"}
+              {loading ? (
+                <PacmanLoader size={10} color="#fff" />
+              ) : (
+                "Se connecter"
+              )}
             </button>
 
             <p className="text-center text-sm text-muted">
-              Déjà inscrit ?{" "}
+              Pas encore de compte ?{" "}
               <a
-                href="/login"
+                href="/register"
                 className="font-bold underline decoration-2 underline-offset-2"
                 style={{ color: "var(--tinder-via)" }}
               >
-                Connecte-toi
+                Inscris-toi
               </a>
             </p>
           </form>
-
-          <p className="text-center text-xs text-muted mt-4 px-6">
-            En t&apos;inscrivant, tu acceptes nos conditions imaginaires et
-            promets d&apos;être sympa.
-          </p>
         </div>
       </section>
     </main>
